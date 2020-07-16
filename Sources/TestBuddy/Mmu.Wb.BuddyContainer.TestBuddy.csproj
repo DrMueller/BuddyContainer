@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>Mmu.Wb.BuddyContainer.TestBuddy</AssemblyName>
+    <RootNamespace>Mmu.Wb.BuddyContainer.TestBuddy</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lamar" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\Mmu.Wb.BuddyContainer.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
