@@ -8,6 +8,7 @@
     <CodeAnalysisRuleSet>..\..\CA_ProductionCode.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>Mmu.Wb.BuddyContainer.WindowsTray</AssemblyName>
     <StartupObject></StartupObject>
+    <ApplicationIcon>Infrastructure\Assets\App.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
