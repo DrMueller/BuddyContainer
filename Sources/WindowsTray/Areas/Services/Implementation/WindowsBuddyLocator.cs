@@ -1,62 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Reflection;
-using Mmu.Wb.BuddyContainer.Contracts;
+using Mmu.Mlh.ApplicationExtensions.Areas.Dropbox.Services;
+using Mmu.Wb.BuddyContainer.WindowsTray.Areas.Models;
 
 namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Implementation
 {
     public class WindowsBuddyLocator : IWindowsBuddyLocator
     {
+        private readonly IDropboxLocator _dropboxLocator;
         private readonly IFileSystem _fileSystem;
 
-        public WindowsBuddyLocator(IFileSystem fileSystem)
+        public WindowsBuddyLocator(IFileSystem fileSystem, IDropboxLocator dropboxLocator)
         {
             _fileSystem = fileSystem;
+            _dropboxLocator = dropboxLocator;
         }
 
-        public IReadOnlyCollection<IWindowsBuddyEntry> LocateBuddyEntries()
+        public IReadOnlyCollection<WindowsBuddyEntry> LocateBuddyEntries()
         {
-            var allDlls = _fileSystem.Directory.GetFiles(@"C:\MyGit\Personal\WindowsBuddies\EncryptionBuddy\Mmu.Wb.EncryptionBuddy.Integration\bin\Debug\netcoreapp3.1", "*.dll", SearchOption.AllDirectories);
+            var dropboxPath = _dropboxLocator.LocateDropboxPath().Reduce(() => throw new NotSupportedException("Dropbox path not found"));
+            var locatorFiles = _fileSystem.Directory.GetFiles(dropboxPath, "Locator.txt", SearchOption.AllDirectories);
 
-            var buddyEntryType = typeof(IWindowsBuddyEntry);
+            var buddyEntries = locatorFiles
+                .Select(ParseLocatorFile)
+                .OrderBy(f => f.DisplayName)
+                .ToList();
 
-            var entries = new List<IWindowsBuddyEntry>();
+            return buddyEntries;
+        }
 
-            foreach (var dll in allDlls)
-            {
-                try
-                {
-                    var assembly = Assembly.LoadFile(dll);
+        private WindowsBuddyEntry ParseLocatorFile(string filePath)
+        {
+            var fileLines = _fileSystem.File.ReadAllLines(filePath);
 
-                    if (dll.Contains(@"Mmu.Wb.EncryptionBuddy"))
-                    {
-                        Debugger.Break();
-                        var types = assembly.GetTypes().First();
-
-                        var tra = types == buddyEntryType;
-                    }
-
-
-                    var buddyType = assembly.GetTypes().FirstOrDefault(f => f == buddyEntryType);
-
-                    if (buddyType != null)
-                    {
-                        var instance = (IWindowsBuddyEntry)Activator.CreateInstance(buddyType);
-                        entries.Add(instance);
-                    }
-                }
-
-                catch (Exception ex)
-                {
-                    // Best effort
-                }
-            }
-
-            return entries;
+            return new WindowsBuddyEntry(fileLines[0], fileLines[1]);
         }
     }
 }

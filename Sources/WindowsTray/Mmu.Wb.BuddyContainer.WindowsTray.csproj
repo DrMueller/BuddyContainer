@@ -12,14 +12,10 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Mmu.Mlh.ApplicationExtensions" Version="2.4.3" />
     <PackageReference Include="Mmu.Mlh.ServiceProvisioning" Version="2.1.5" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.IO.Abstractions" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Contracts\Mmu.Wb.BuddyContainer.Contracts.csproj" />
-    <ProjectReference Include="..\TestBuddy\Mmu.Wb.BuddyContainer.TestBuddy.csproj" />
   </ItemGroup>
 
   <ItemGroup>
