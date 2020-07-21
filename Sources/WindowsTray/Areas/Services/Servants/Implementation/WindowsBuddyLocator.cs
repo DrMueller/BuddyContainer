@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using JetBrains.Annotations;
 using Mmu.Mlh.ApplicationExtensions.Areas.Dropbox.Services;
 using Mmu.Wb.BuddyContainer.WindowsTray.Areas.Models;
 
-namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Implementation
+namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Servants.Implementation
 {
+    [UsedImplicitly]
     public class WindowsBuddyLocator : IWindowsBuddyLocator
     {
         private readonly IDropboxLocator _dropboxLocator;
@@ -36,7 +38,13 @@ namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Implementation
         {
             var fileLines = _fileSystem.File.ReadAllLines(filePath);
 
-            return new WindowsBuddyEntry(fileLines[0], fileLines[1]);
+            var displayName = fileLines[0];
+            var executionPath = fileLines[1];
+            var iconLetterValue = fileLines[2];
+
+            var iconLetter = IconLetter.CreateByLetterValue(iconLetterValue);
+
+            return new WindowsBuddyEntry(displayName, executionPath, iconLetter);
         }
     }
 }

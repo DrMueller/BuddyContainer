@@ -1,8 +1,10 @@
 ﻿using System.IO.Abstractions;
+using JetBrains.Annotations;
 using Lamar;
 
 namespace Mmu.Wb.BuddyContainer.WindowsTray.Infrastructure.DependencyInjcetion
 {
+    [UsedImplicitly]
     public class WindowsTrayServiceRegistryCollection : ServiceRegistry
     {
         public WindowsTrayServiceRegistryCollection()

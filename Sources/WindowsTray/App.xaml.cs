@@ -1,14 +1,12 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
+﻿using System.Drawing;
+using System.IO.Abstractions;
 using System.Windows;
 using System.Windows.Forms;
 using Lamar;
+using Microsoft.Extensions.DependencyInjection;
 using Mmu.Mlh.LanguageExtensions.Areas.Assemblies.Extensions;
 using Mmu.Mlh.ServiceProvisioning.Areas.Initialization.Models;
 using Mmu.Mlh.ServiceProvisioning.Areas.Initialization.Services;
-using Mmu.Wb.BuddyContainer.WindowsTray.Areas.Models;
 using Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services;
 
 namespace Mmu.Wb.BuddyContainer.WindowsTray
@@ -19,11 +17,14 @@ namespace Mmu.Wb.BuddyContainer.WindowsTray
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var containerConfig = ContainerConfiguration.CreateFromAssembly(typeof(App).Assembly);
+            var appAssembly = typeof(App).Assembly;
+
+            var containerConfig = ContainerConfiguration.CreateFromAssembly(appAssembly);
             _container = ServiceProvisioningInitializer.CreateContainer(containerConfig);
 
+            var fileSystem = _container.GetService<IFileSystem>();
             var assemblyBasePath = typeof(App).Assembly.GetBasePath();
-            var iconPath = Path.Combine(assemblyBasePath, "Infrastructure", "Assets", "App.ico");
+            var iconPath = fileSystem.Path.Combine(assemblyBasePath, "Infrastructure", "Assets", "App.ico");
 
             var notifyIcon = new NotifyIcon
             {
@@ -32,26 +33,11 @@ namespace Mmu.Wb.BuddyContainer.WindowsTray
                 Visible = true,
             };
 
-            InitializeBuddyEntries(notifyIcon);
-        }
-
-        private static ToolStripItem CreateMenuItem(WindowsBuddyEntry buddyEntry)
-        {
-            var menuItem = new ToolStripMenuItem(buddyEntry.DisplayName);
-            menuItem.Click += (sender, e) => Process.Start(buddyEntry.ExecutionPath);
-
-            return menuItem;
-        }
-
-        private void InitializeBuddyEntries(NotifyIcon notifyIcon)
-        {
-            var locator = _container.GetInstance<IWindowsBuddyLocator>();
-
-            var buddyEntries = locator.LocateBuddyEntries();
-            var menuItems = buddyEntries.Select(CreateMenuItem).ToArray();
+            var toolStripItemFactory = _container.GetService<IToolStripItemFactory>();
+            var toolStripItems = toolStripItemFactory.CreateAll();
 
             notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-            notifyIcon.ContextMenuStrip.Items.AddRange(menuItems);
+            notifyIcon.ContextMenuStrip.Items.AddRange(toolStripItems);
         }
     }
 }
