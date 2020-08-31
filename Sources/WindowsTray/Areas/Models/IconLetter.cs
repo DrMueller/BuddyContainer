@@ -8,6 +8,7 @@ namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Models
     {
         private static readonly IReadOnlyCollection<IconLetter> _knownLetters = new List<IconLetter>
         {
+            new IconLetter("D"),
             new IconLetter("E"),
             new IconLetter("S"),
             new IconLetter("T"),
