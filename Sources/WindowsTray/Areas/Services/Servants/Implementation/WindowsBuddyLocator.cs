@@ -27,20 +27,22 @@ namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Servants.Implementati
             var locatorFiles = _fileSystem.Directory.GetFiles(dropboxPath, "Locator.txt", SearchOption.AllDirectories);
 
             var buddyEntries = locatorFiles
-                .Select(ParseLocatorFile)
+                .Select(fp => ParseLocatorFile(fp, dropboxPath))
                 .OrderBy(f => f.DisplayName)
                 .ToList();
 
             return buddyEntries;
         }
 
-        private WindowsBuddyEntry ParseLocatorFile(string filePath)
+        private WindowsBuddyEntry ParseLocatorFile(string filePath, string dropboxPath)
         {
             var fileLines = _fileSystem.File.ReadAllLines(filePath);
 
             var displayName = fileLines[0];
             var executionPath = fileLines[1];
             var iconLetterValue = fileLines[2];
+
+            executionPath = executionPath.Replace("%DropboxPath%", dropboxPath, StringComparison.OrdinalIgnoreCase);
 
             var iconLetter = IconLetter.CreateByLetterValue(iconLetterValue);
 
