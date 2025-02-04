@@ -3,6 +3,8 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using JetBrains.Annotations;
+using Mmu.Mlh.ApplicationExtensions.Areas.Dropbox.Services;
+using Mmu.Mlh.LanguageExtensions.Areas.Types.Maybes;
 using Mmu.Wb.BuddyContainer.WindowsTray.Areas.Models;
 
 namespace Mmu.Wb.BuddyContainer.WindowsTray.Areas.Services.Servants.Implementation
